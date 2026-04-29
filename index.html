@@ -195,6 +195,48 @@
     font-size: 14px; border: 1px dashed var(--line-2); border-radius: 10px;
   }
 
+  /* Positioning view */
+  .pos-hero {
+    background: #fff; border: 1px solid var(--line);
+    border-left: 4px solid var(--accent); border-radius: 12px;
+    padding: 22px 26px; margin-bottom: 24px;
+  }
+  .pos-hero[data-segment="venture"] { border-left-color: var(--venture); }
+  .pos-hero[data-segment="platform"] { border-left-color: var(--platform); }
+  .pos-hero[data-segment="service"] { border-left-color: var(--service); }
+  .pos-hero .label {
+    font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase;
+    font-weight: 700; color: var(--muted); margin-bottom: 8px;
+  }
+  .pos-hero .line { font-size: 21px; line-height: 1.35; font-weight: 600; color: var(--ink); letter-spacing: -0.01em; }
+  .pos-section { margin-bottom: 26px; }
+  .pos-section .lede { font-size: 13px; color: var(--muted); margin: -4px 0 12px; }
+  .why-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; }
+  .why-card {
+    background: #fff; border: 1px solid var(--line); border-radius: 10px;
+    padding: 16px 18px;
+  }
+  .why-card .num { font-size: 26px; font-weight: 800; color: var(--callout-text); line-height: 1; margin-bottom: 8px; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+  .why-card .head { font-size: 14px; font-weight: 700; color: var(--ink); margin: 0 0 4px; }
+  .why-card .body { font-size: 13.5px; color: var(--ink-2); line-height: 1.5; }
+  .pillars-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 12px; }
+  .pillar-card {
+    background: #fff; border: 1px solid var(--line); border-radius: 10px;
+    padding: 16px 18px;
+  }
+  .pillar-card .head { font-size: 13px; font-weight: 700; color: var(--callout-text); letter-spacing: 0.04em; text-transform: uppercase; margin: 0 0 6px; }
+  .pillar-card .body { font-size: 13.5px; color: var(--ink-2); line-height: 1.5; }
+  .snippet-card {
+    background: #fff; border: 1px solid var(--line); border-radius: 12px;
+    padding: 18px 20px;
+    display: flex; gap: 14px; justify-content: space-between; align-items: flex-start; flex-wrap: wrap;
+  }
+  .snippet-text {
+    flex: 1; min-width: 240px;
+    font-size: 15px; line-height: 1.55; color: var(--ink-2); font-style: italic;
+    border-left: 3px solid var(--accent); padding-left: 14px;
+  }
+
   /* Section heads */
   .section-head { font-size: 13px; text-transform: uppercase; letter-spacing: 0.1em; font-weight: 700; color: var(--muted); margin: 26px 0 12px; }
 
@@ -232,6 +274,7 @@
 
   <div class="views" role="tablist" aria-label="View">
     <button class="view-tab active" data-view="content">Content Map <span class="count" id="count-content">0</span></button>
+    <button class="view-tab" data-view="positioning">Positioning</button>
     <button class="view-tab" data-view="onboarding">Onboarding Emails <span class="count" id="count-onboarding">0</span></button>
     <button class="view-tab" data-view="monthly">Monthly Emails <span class="count" id="count-monthly">0</span></button>
     <button class="view-tab" data-view="coi">COI Quick-pick <span class="count" id="count-coi">0</span></button>
@@ -261,6 +304,11 @@
   <!-- Content view -->
   <section id="view-content">
     <div id="content-list" class="grid"></div>
+  </section>
+
+  <!-- Positioning view -->
+  <section id="view-positioning" class="hidden">
+    <div id="positioning-content"></div>
   </section>
 
   <!-- Onboarding view -->
@@ -726,6 +774,51 @@ If there are introductions I can make — to other advisors, to companies in you
   ]
 };
 
+const POSITIONING = {
+  venture: {
+    line: "Portfolio protection built into the way you support founders. Vouch keeps your companies covered at every stage, so capital is protected, governance is sound, and nothing stalls a round.",
+    why: [
+      { head: "Founder success", body: "A trusted insurance recommendation is one less thing slowing a founder down — and one more way the fund adds value beyond capital." },
+      { head: "Fundraising protection", body: "Inadequate coverage can surface in diligence and stall or block other firms from subscribing to the round." },
+      { head: "Capital protection", body: "A lawsuit at an underinsured portco can wipe out the return on that investment. Insurance protects deployed capital." }
+    ],
+    pillars: [
+      { head: "Industry expertise", body: "Our advisors work with VC-backed companies every day. We understand term sheets, board dynamics, and the coverage gaps that show up at every stage." },
+      { head: "Effortless experience", body: "Most portfolio companies are covered within days, not weeks. Founders won't lose a deal or miss a close because insurance is slow." },
+      { head: "Scalable coverage", body: "Coverage that right-sizes as portcos raise, hire, and expand — without restarting from scratch every 12 months." }
+    ],
+    snippet: "Your portfolio companies will run into real insurance decisions faster than they expect. Vouch helps founders get covered early, avoid common gaps, and move through growth milestones with confidence."
+  },
+  platform: {
+    line: "Underinsured customers hit walls on enterprise deals, compliance reviews, and contracts that would make them your best accounts. Vouch clears those obstacles — so your customers grow faster, and your platform grows with them.",
+    why: [
+      { head: "Increase customer LTV", body: "Covered customers grow faster, spend more, and churn less. Their growth is your growth." },
+      { head: "Platform value-add", body: "A trusted insurance recommendation turns coverage into a product perk — expanding what your platform delivers without building anything new." },
+      { head: "Growth ceilings cleared", body: "Underinsured customers get blocked from enterprise procurement and compliance reviews. Vouch clears the path to higher-value accounts." }
+    ],
+    pillars: [
+      { head: "Industry expertise", body: "Vouch is built for the same companies using your platform. Your customers won't have to explain their business to us." },
+      { head: "Effortless experience", body: "Getting covered takes days, not weeks. Customers get a dedicated team that owns insurance end-to-end, so it doesn't compete with building product or closing deals." },
+      { head: "Scalable coverage", body: "As companies in your ecosystem raise, hire, and grow, their coverage follows. Stage-appropriate today, no gaps tomorrow." }
+    ],
+    snippet: "Your customers will eventually need business insurance. Vouch makes it easy to offer a trusted recommendation with expert guidance and a smooth experience that keeps pace with growing companies."
+  },
+  service: {
+    line: "The brokerage that protects your deals and your reputation. When your client needs something fast — a COI, a quote, an answer — Vouch delivers. That responsiveness is an extension of your firm, not a risk to it.",
+    why: [
+      { head: "Deepen the advisory relationship", body: "Surfacing needs clients haven't thought of yet makes you more indispensable to them." },
+      { head: "Reputation", body: "Every referral is an endorsement. A client uninsured at a critical moment reflects on you — their trusted advisor." },
+      { head: "Deal & transaction protection", body: "Underinsured clients can stall or kill a closing, a raise, or a contract negotiation at the worst possible moment. Coverage keeps your transactions on track." }
+    ],
+    pillars: [
+      { head: "Industry expertise", body: "Our advisors understand term sheets, governance requirements, and fiduciary exposure. We design coverage that stands up to investors, regulators, and boards." },
+      { head: "Effortless experience", body: "Insurance shouldn't slow down a close, a deal, or a diligence process. Vouch provides rapid COIs, fast quotes, and a team that picks up the phone." },
+      { head: "Scalable coverage", body: "As clients raise more capital, hire at scale, and take on larger contracts, their risk grows. Vouch builds coverage that anticipates those inflection points." }
+    ],
+    snippet: "When your clients need insurance, Vouch picks up. Our advisors are responsive, expert, and built for the same complex decisions you're navigating — so every referral reflects well on you."
+  }
+};
+
 const COIS = [
   { name: "Rain", owner: "Rich", segment: "platform", focus: "Platform / Web3", suggest: "Web3 insurance overview", slug: "understanding-web3-insurance" },
   { name: "New Lab", owner: "Brianna", segment: "venture", focus: "Venture / all verticals", suggest: "When does my startup need insurance — for general portfolio use", slug: "when-does-my-startup-need-insurance" },
@@ -872,6 +965,70 @@ function renderMonthly() {
   `).join('');
 }
 
+function renderPositioning() {
+  const list = document.getElementById('positioning-content');
+  if (segment === 'all') {
+    list.innerHTML = `<div class="empty">Positioning is segment-specific. Pick Venture, Platform, or Service Provider above.</div>`;
+    return;
+  }
+  const p = POSITIONING[segment];
+  if (!p) { list.innerHTML = ''; return; }
+
+  // Apply search filter — if no match in any positioning text, show empty
+  const allText = [p.line, p.snippet, ...p.why.flatMap(w => [w.head, w.body]), ...p.pillars.flatMap(w => [w.head, w.body])].join(' ');
+  if (!matchesQuery(allText)) {
+    list.innerHTML = `<div class="empty">No positioning content matches "${escapeHtml(query)}".</div>`;
+    return;
+  }
+
+  const segLabel = segment === 'venture' ? 'Venture / Accelerators' : segment === 'platform' ? 'Platform Providers' : 'Service Providers';
+
+  list.innerHTML = `
+    <div class="pos-hero" data-segment="${segment}">
+      <div class="label">Positioning · ${escapeHtml(segLabel)}</div>
+      <div class="line">${escapeHtml(p.line)}</div>
+    </div>
+
+    <div class="pos-section">
+      <div class="section-head">Why they refer</div>
+      <div class="lede">The partner's business case in their language. Use this when a partner asks "what's in it for me?"</div>
+      <div class="why-grid">
+        ${p.why.map((w, i) => `
+          <div class="why-card">
+            <div class="num">0${i+1}</div>
+            <div class="head">${escapeHtml(w.head)}</div>
+            <div class="body">${escapeHtml(w.body)}</div>
+          </div>
+        `).join('')}
+      </div>
+    </div>
+
+    <div class="pos-section">
+      <div class="section-head">Three things Vouch delivers</div>
+      <div class="lede">A 30-second primer before a partner conversation.</div>
+      <div class="pillars-grid">
+        ${p.pillars.map(w => `
+          <div class="pillar-card">
+            <div class="head">${escapeHtml(w.head)}</div>
+            <div class="body">${escapeHtml(w.body)}</div>
+          </div>
+        `).join('')}
+      </div>
+    </div>
+
+    <div class="pos-section">
+      <div class="section-head">Drop-in messaging snippet</div>
+      <div class="lede">Copy and paste into emails, partner intros, deck slides, or LinkedIn outreach.</div>
+      <div class="snippet-card">
+        <div class="snippet-text" id="snippet-${segment}">${escapeHtml(p.snippet)}</div>
+        <div class="actions">
+          <button class="btn primary" data-copy-snippet="${segment}">Copy snippet</button>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
 function renderCOIs() {
   const list = document.getElementById('coi-list');
   const rows = COIS.filter(c => {
@@ -907,11 +1064,13 @@ function renderAll() {
   });
   // section visibility
   document.getElementById('view-content').classList.toggle('hidden', view !== 'content');
+  document.getElementById('view-positioning').classList.toggle('hidden', view !== 'positioning');
   document.getElementById('view-onboarding').classList.toggle('hidden', view !== 'onboarding');
   document.getElementById('view-monthly').classList.toggle('hidden', view !== 'monthly');
   document.getElementById('view-coi').classList.toggle('hidden', view !== 'coi');
 
   renderContent();
+  renderPositioning();
   renderOnboarding();
   renderMonthly();
   renderCOIs();
@@ -954,6 +1113,9 @@ document.body.addEventListener('click', async e => {
   } else if (btn.dataset.copyEmail) {
     const node = document.getElementById(btn.dataset.copyEmail);
     if (node) textToCopy = node.innerText;
+  } else if (btn.dataset.copySnippet) {
+    const seg = btn.dataset.copySnippet;
+    if (POSITIONING[seg]) textToCopy = POSITIONING[seg].snippet;
   }
   if (textToCopy === null) return;
 
