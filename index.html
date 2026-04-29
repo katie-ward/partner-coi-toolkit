@@ -95,17 +95,36 @@
   .ctx p { margin: 0; color: var(--ink-2); font-size: 14px; }
   .ctx .pos { font-style: italic; color: var(--ink-2); margin-top: 6px; font-size: 13px; }
 
-  /* Content map cards */
+  /* Content map table */
   .grid { display: grid; grid-template-columns: 1fr; gap: 10px; }
-  .card {
+  .table-wrap {
     background: #fff; border: 1px solid var(--line); border-radius: 10px;
-    padding: 16px 18px; transition: border 0.15s ease, box-shadow 0.15s ease;
+    overflow: hidden;
   }
-  .card:hover { border-color: var(--line-2); box-shadow: 0 4px 14px rgba(11,27,43,0.04); }
-  .card .row1 { display: flex; gap: 16px; justify-content: space-between; align-items: start; flex-wrap: wrap; }
-  .trigger { font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; font-weight: 700; margin-bottom: 4px; }
-  .title { font-size: 16px; font-weight: 600; margin: 0; line-height: 1.35; }
-  .url { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 12px; color: var(--muted); margin-top: 6px; word-break: break-all; }
+  .table-scroll { overflow-x: auto; }
+  .content-table {
+    width: 100%; border-collapse: collapse; font-size: 14px;
+  }
+  .content-table thead th {
+    text-align: left; font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em;
+    font-weight: 700; color: var(--muted); padding: 12px 16px;
+    background: var(--paper); border-bottom: 1px solid var(--line);
+  }
+  .content-table tbody td {
+    padding: 14px 16px; border-bottom: 1px solid var(--line);
+    vertical-align: top;
+  }
+  .content-table tbody tr:last-child td { border-bottom: 0; }
+  .content-table tbody tr:hover { background: var(--hover); }
+  .col-trigger { width: 26%; color: var(--ink-2); font-weight: 500; line-height: 1.4; }
+  .col-title { width: 30%; font-weight: 600; color: var(--ink); line-height: 1.4; }
+  .col-slug {
+    width: 28%; font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 12px; color: var(--muted); word-break: break-all; line-height: 1.5;
+  }
+  .col-actions { width: 16%; text-align: right; white-space: nowrap; }
+  .col-actions .btn { padding: 6px 10px; font-size: 12px; }
+  .col-actions .btn + .btn { margin-left: 4px; }
   .actions { display: flex; gap: 8px; flex-shrink: 0; }
   .btn {
     border: 1px solid var(--line-2); background: #fff; color: var(--ink);
@@ -754,22 +773,36 @@ function renderContent() {
     return;
   }
 
-  list.innerHTML = rows.map(([trig, title, slug]) => {
+  const body = rows.map(([trig, title, slug]) => {
     const url = BASE + slug;
-    return `<div class="card">
-      <div class="row1">
-        <div style="flex:1; min-width:240px;">
-          <div class="trigger">${escapeHtml(trig)}</div>
-          <div class="title">${escapeHtml(title)}</div>
-          <div class="url">${escapeHtml(url)}</div>
-        </div>
-        <div class="actions">
-          <button class="btn" data-copy="${escapeHtml(url)}">Copy URL</button>
-          <a class="btn primary" href="${escapeHtml(url)}" target="_blank" rel="noopener">Open ↗</a>
-        </div>
-      </div>
-    </div>`;
+    return `<tr>
+      <td class="col-trigger">${escapeHtml(trig)}</td>
+      <td class="col-title">${escapeHtml(title)}</td>
+      <td class="col-slug">${escapeHtml(slug)}</td>
+      <td class="col-actions">
+        <button class="btn" data-copy="${escapeHtml(url)}">Copy URL</button>
+        <a class="btn primary" href="${escapeHtml(url)}" target="_blank" rel="noopener">Open ↗</a>
+      </td>
+    </tr>`;
   }).join('');
+
+  list.innerHTML = `
+    <div class="table-wrap">
+      <div class="table-scroll">
+        <table class="content-table">
+          <thead>
+            <tr>
+              <th>Trigger moment</th>
+              <th>Send this</th>
+              <th>Slug</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>${body}</tbody>
+        </table>
+      </div>
+    </div>
+  `;
 }
 
 function renderOnboarding() {
@@ -825,7 +858,7 @@ function renderMonthly() {
     <div class="email-card">
       <div class="email-head">
         <div class="meta-stack">
-          <span class="email-stage evergreen">Evergreen · ${escapeHtml(e.title)}</span>
+          <span class="email-stage evergreen">${escapeHtml(e.title)}</span>
           <div class="email-subject">Subject: ${escapeHtml(e.subject)}</div>
           <div class="email-when">${escapeHtml(e.when)}</div>
         </div>
