@@ -1,0 +1,951 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Partner COI Toolkit — Vouch</title>
+<style>
+  :root {
+    /* Vouch 2.0 brand palette */
+    --ink: #0F1C2C;            /* Dark Blue — main text */
+    --ink-2: #1F2D3D;
+    --paper: #F7FAF2;          /* Light Taupe — background */
+    --line: #E2E6DA;
+    --line-2: #D2D7C7;
+    --accent: #3BE0AD;         /* Primary Green — pop, lines, numbers */
+    --accent-soft: #D6F8EC;
+    --callout-text: #19A078;   /* Text Green — callout text, links */
+    --highlight: #E8FC83;      /* Accent Yellow — high-impact highlights */
+    --callout-blue: #50EAF2;   /* Accent Blue — callout text on dark */
+    --venture: #326CA3;
+    --venture-soft: #E5EDF6;
+    --platform: #CA6233;
+    --platform-soft: #F8E5DA;
+    --service: #E3A82B;
+    --service-soft: #FAEDD0;
+    --muted: #5A6878;
+    --hover: #EEF1E5;
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0; background: var(--paper); color: var(--ink);
+    font-family: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    font-size: 15px; line-height: 1.5;
+  }
+  .wrap { max-width: 1180px; margin: 0 auto; padding: 32px 28px 80px; }
+  header { border-bottom: 1px solid var(--line); padding-bottom: 22px; margin-bottom: 28px; }
+  .eyebrow { font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); font-weight: 600; }
+  h1 { font-size: 34px; line-height: 1.15; margin: 6px 0 8px; letter-spacing: -0.02em; font-weight: 700; }
+  h1 .accent { color: var(--callout-text); }
+  .lede { color: var(--ink-2); max-width: 720px; font-size: 16px; }
+  .meta { color: var(--muted); font-size: 13px; margin-top: 10px; }
+
+  /* Controls */
+  .controls { display: flex; gap: 14px; align-items: center; flex-wrap: wrap; margin: 24px 0 8px; }
+  .search {
+    flex: 1; min-width: 260px;
+    background: #fff; border: 1px solid var(--line-2); border-radius: 10px;
+    padding: 11px 14px; font-size: 15px; color: var(--ink);
+    transition: border 0.15s ease, box-shadow 0.15s ease;
+  }
+  .search:focus { outline: none; border-color: var(--ink); box-shadow: 0 0 0 3px rgba(11,27,43,0.08); }
+
+  /* Segment tabs */
+  .segments { display: flex; gap: 8px; flex-wrap: wrap; margin: 18px 0 6px; }
+  .seg {
+    border: 1px solid var(--line-2); background: #fff; color: var(--ink);
+    padding: 10px 16px; border-radius: 999px; cursor: pointer;
+    font-size: 14px; font-weight: 600; letter-spacing: 0.01em;
+    transition: all 0.15s ease;
+  }
+  .seg .dot { display: inline-block; width: 8px; height: 8px; border-radius: 999px; margin-right: 8px; vertical-align: middle; }
+  .seg .dot.venture { background: var(--venture); }
+  .seg .dot.platform { background: var(--platform); }
+  .seg .dot.service { background: var(--service); }
+  .seg:hover { background: var(--hover); }
+  .seg.active { background: var(--ink); color: #fff; border-color: var(--ink); }
+  .seg.active .dot { box-shadow: 0 0 0 2px #fff; }
+
+  /* View tabs */
+  .views { display: flex; gap: 0; border-bottom: 1px solid var(--line); margin: 22px 0 24px; flex-wrap: wrap; }
+  .view-tab {
+    background: transparent; border: 0; cursor: pointer;
+    padding: 12px 16px; font-size: 14px; font-weight: 600;
+    color: var(--muted); border-bottom: 2px solid transparent;
+    transition: all 0.15s ease; margin-bottom: -1px;
+  }
+  .view-tab:hover { color: var(--ink); }
+  .view-tab.active { color: var(--ink); border-bottom-color: var(--accent); }
+  .view-tab .count {
+    font-size: 11px; background: var(--line); color: var(--muted);
+    padding: 2px 7px; border-radius: 999px; margin-left: 6px; font-weight: 700;
+  }
+  .view-tab.active .count { background: var(--accent-soft); color: var(--callout-text); }
+
+  /* Segment context banner */
+  .ctx {
+    background: #fff; border: 1px solid var(--line);
+    border-left: 4px solid var(--accent); border-radius: 8px;
+    padding: 14px 18px; margin-bottom: 22px;
+  }
+  .ctx[data-segment="venture"] { border-left-color: var(--venture); background: var(--venture-soft); }
+  .ctx[data-segment="platform"] { border-left-color: var(--platform); background: var(--platform-soft); }
+  .ctx[data-segment="service"] { border-left-color: var(--service); background: var(--service-soft); }
+  .ctx h3 { margin: 0 0 4px; font-size: 15px; }
+  .ctx p { margin: 0; color: var(--ink-2); font-size: 14px; }
+  .ctx .pos { font-style: italic; color: var(--ink-2); margin-top: 6px; font-size: 13px; }
+
+  /* Content map cards */
+  .grid { display: grid; grid-template-columns: 1fr; gap: 10px; }
+  .card {
+    background: #fff; border: 1px solid var(--line); border-radius: 10px;
+    padding: 16px 18px; transition: border 0.15s ease, box-shadow 0.15s ease;
+  }
+  .card:hover { border-color: var(--line-2); box-shadow: 0 4px 14px rgba(11,27,43,0.04); }
+  .card .row1 { display: flex; gap: 16px; justify-content: space-between; align-items: start; flex-wrap: wrap; }
+  .trigger { font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; font-weight: 700; margin-bottom: 4px; }
+  .title { font-size: 16px; font-weight: 600; margin: 0; line-height: 1.35; }
+  .url { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 12px; color: var(--muted); margin-top: 6px; word-break: break-all; }
+  .actions { display: flex; gap: 8px; flex-shrink: 0; }
+  .btn {
+    border: 1px solid var(--line-2); background: #fff; color: var(--ink);
+    padding: 7px 12px; border-radius: 8px; font-size: 13px; font-weight: 600;
+    cursor: pointer; transition: all 0.15s ease; white-space: nowrap;
+  }
+  .btn:hover { background: var(--ink); color: #fff; border-color: var(--ink); }
+  .btn.primary { background: var(--ink); color: #fff; border-color: var(--ink); }
+  .btn.primary:hover { background: var(--accent); border-color: var(--accent); color: var(--ink); }
+  .btn.copied { background: var(--callout-text); border-color: var(--callout-text); color: #fff; }
+
+  /* Email cards */
+  .email-card {
+    background: #fff; border: 1px solid var(--line); border-radius: 12px;
+    margin-bottom: 18px; overflow: hidden;
+  }
+  .email-head {
+    padding: 16px 20px; border-bottom: 1px solid var(--line);
+    display: flex; justify-content: space-between; align-items: start; gap: 16px; flex-wrap: wrap;
+  }
+  .email-head .meta-stack { flex: 1; min-width: 240px; }
+  .email-stage {
+    display: inline-block; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase;
+    background: var(--ink); color: var(--callout-blue); padding: 3px 9px; border-radius: 4px; font-weight: 700; margin-bottom: 6px;
+  }
+  .email-stage.evergreen { background: var(--callout-text); color: #fff; }
+  .email-when { font-size: 13px; color: var(--muted); margin-top: 6px; font-style: italic; }
+  .email-subject { font-size: 16px; font-weight: 600; margin: 4px 0 0; line-height: 1.35; }
+  .email-body {
+    padding: 18px 20px; white-space: pre-wrap; font-size: 14.5px; line-height: 1.6;
+    color: var(--ink-2);
+  }
+  .email-body a { color: var(--callout-text); text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 2px; }
+
+  /* COI quick-pick */
+  .coi-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px; }
+  .coi-card {
+    background: #fff; border: 1px solid var(--line); border-radius: 10px;
+    padding: 14px 16px; transition: all 0.15s ease;
+  }
+  .coi-card:hover { border-color: var(--ink); box-shadow: 0 4px 14px rgba(11,27,43,0.04); }
+  .coi-name { font-weight: 700; font-size: 15px; }
+  .coi-owner { font-size: 12px; color: var(--muted); }
+  .coi-focus { font-size: 13px; margin: 6px 0 8px; color: var(--ink-2); }
+  .pill {
+    display: inline-block; font-size: 11px; padding: 2px 8px; border-radius: 999px;
+    font-weight: 600; letter-spacing: 0.02em; margin-right: 4px;
+  }
+  .pill.venture { background: var(--venture-soft); color: var(--venture); }
+  .pill.platform { background: var(--platform-soft); color: var(--platform); }
+  .pill.service { background: var(--service-soft); color: var(--service); }
+  .coi-suggest { font-size: 13px; margin-top: 8px; padding-top: 8px; border-top: 1px dashed var(--line); color: var(--ink-2); }
+  .coi-suggest strong { color: var(--ink); }
+
+  /* Tip box */
+  .tip {
+    background: #fff; border: 1px dashed var(--line-2);
+    border-radius: 10px; padding: 14px 18px; margin-bottom: 22px;
+    font-size: 14px; color: var(--ink-2);
+  }
+  .tip strong { color: var(--ink); }
+  .tip em { background: var(--highlight); padding: 2px 6px; border-radius: 3px; font-style: italic; box-decoration-break: clone; -webkit-box-decoration-break: clone; }
+  .tip code { background: var(--paper); padding: 2px 6px; border-radius: 4px; font-size: 13px; }
+
+  /* Empty state */
+  .empty {
+    text-align: center; padding: 40px 20px; color: var(--muted);
+    font-size: 14px; border: 1px dashed var(--line-2); border-radius: 10px;
+  }
+
+  /* Section heads */
+  .section-head { font-size: 13px; text-transform: uppercase; letter-spacing: 0.1em; font-weight: 700; color: var(--muted); margin: 26px 0 12px; }
+
+  /* Hide non-active */
+  .hidden { display: none !important; }
+
+  /* Footer */
+  footer { margin-top: 50px; padding-top: 20px; border-top: 1px solid var(--line); color: var(--muted); font-size: 13px; }
+  footer a { color: var(--callout-text); }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="eyebrow">Partner Activation · Vouch</div>
+    <h1>Partner <span class="accent">COI Toolkit</span></h1>
+    <p class="lede">Pick the segment, find the right asset or email, copy it, and personalize. Built so producers and BDRs can move fast in the moment that matters.</p>
+    <div class="meta">Three audience segments · Content map · Onboarding sequences · Monthly evergreen emails · COI quick-pick</div>
+  </header>
+
+  <div class="tip">
+    <strong>The formula.</strong> Don't forward a link cold. Always add one personal sentence: <em>"Saw this and thought of [client/portfolio company]. [One sentence on the connection]. Let me know if it sparks any questions."</em>
+  </div>
+
+  <div class="controls">
+    <input id="search" class="search" type="text" placeholder="Search trigger moments, subjects, COI names, content titles…" />
+  </div>
+
+  <div class="segments" role="tablist" aria-label="Audience segment">
+    <button class="seg active" data-segment="venture" role="tab"><span class="dot venture"></span>Venture / Accelerators</button>
+    <button class="seg" data-segment="platform" role="tab"><span class="dot platform"></span>Platform Providers</button>
+    <button class="seg" data-segment="service" role="tab"><span class="dot service"></span>Service Providers</button>
+    <button class="seg" data-segment="all" role="tab">All trigger moments</button>
+  </div>
+
+  <div class="views" role="tablist" aria-label="View">
+    <button class="view-tab active" data-view="content">Content Map <span class="count" id="count-content">0</span></button>
+    <button class="view-tab" data-view="onboarding">Onboarding Emails <span class="count" id="count-onboarding">0</span></button>
+    <button class="view-tab" data-view="monthly">Monthly Emails <span class="count" id="count-monthly">0</span></button>
+    <button class="view-tab" data-view="coi">COI Quick-pick <span class="count" id="count-coi">0</span></button>
+  </div>
+
+  <!-- Segment context banners -->
+  <div id="ctx-venture" class="ctx" data-segment="venture">
+    <h3>Venture / Accelerators</h3>
+    <p>VC platform teams, fund partners, accelerator operators. Their clients are founders.</p>
+    <p class="pos">Vouch positioning: "Insurance that keeps up with founders. Experts who understand startup growth milestones."</p>
+  </div>
+  <div id="ctx-platform" class="ctx hidden" data-segment="platform">
+    <h3>Platform Providers</h3>
+    <p>Payroll platforms, finance stack tools, compliance SaaS, HR systems. Their clients are startups navigating enterprise readiness.</p>
+    <p class="pos">Vouch positioning: "Insurance that fits naturally into the modern business stack."</p>
+  </div>
+  <div id="ctx-service" class="ctx hidden" data-segment="service">
+    <h3>Service Providers</h3>
+    <p>Startup-focused attorneys, CPAs, fractional CFOs, banking partners. Their clients rely on them as a first call.</p>
+    <p class="pos">Vouch positioning: "A credible, expert-led brokerage that makes advisors look good."</p>
+  </div>
+  <div id="ctx-all" class="ctx hidden" data-segment="all">
+    <h3>All trigger moments</h3>
+    <p>Cross-segment lookup. Use this when you know what's happening in the client's business but aren't sure which segment angle to use.</p>
+  </div>
+
+  <!-- Content view -->
+  <section id="view-content">
+    <div id="content-list" class="grid"></div>
+  </section>
+
+  <!-- Onboarding view -->
+  <section id="view-onboarding" class="hidden">
+    <div class="section-head">Onboarding sequence — Day 1, Day 14, End of Q1</div>
+    <div id="onboarding-list"></div>
+  </section>
+
+  <!-- Monthly view -->
+  <section id="view-monthly" class="hidden">
+    <div class="section-head">Monthly evergreen emails — pick by trigger moment</div>
+    <div id="monthly-list"></div>
+  </section>
+
+  <!-- COI quick-pick -->
+  <section id="view-coi" class="hidden">
+    <div class="section-head">Quick-pick by existing COI</div>
+    <div id="coi-list" class="coi-grid"></div>
+  </section>
+
+  <footer>
+    Built for Vouch producers and BDRs · For the full partnership content sheet, see the <a href="https://docs.google.com/spreadsheets/d/1Trj2pxdothnp5bM21rzLquFVXRbzGnW30ohAVztwVSA/edit?usp=sharing" target="_blank" rel="noopener">Partnership Content Sheet</a>.
+  </footer>
+</div>
+
+<script>
+const BASE = 'https://vouch.us/insurance101/';
+
+// ===== DATA =====
+const CONTENT = {
+  venture: [
+    ["General intro / new relationship", "What kind of insurance do startups need", "what-kind-of-insurance-do-startups-need"],
+    ["Founder near incorporation", "When does my startup need insurance", "when-does-my-startup-need-insurance"],
+    ["Portfolio company just announced a raise", "Why premiums increase after raising money", "why-business-insurance-premiums-increase-after-you-raise-money"],
+    ["New investors / board formation", "Directors & Officers insurance (understand)", "directors-and-officers-insurance"],
+    ["Series A — governance & liability", "Sides A, B, C of D&O", "sides-a-b-c-directors-and-officers-insurance"],
+    ["New board members / board risk", "Understanding board member liability", "understanding-board-member-liability-insurance"],
+    ["AI-focused fund", "What kind of insurance do AI companies need", "what-kind-of-business-insurance-do-ai-companies-need"],
+    ["AI-focused fund (deeper)", "AI risk management", "ai-risk-management"],
+    ["SaaS-heavy portfolio", "What kind of insurance do B2B SaaS companies need", "what-kind-of-business-insurance-do-b2b-saas-companies-need"],
+    ["Fintech-heavy portfolio", "What kind of insurance do fintech companies need", "what-kind-of-business-insurance-do-fintech-companies-need"],
+    ["Healthcare / life sciences portfolio", "What kind of insurance do healthtech companies need", "what-kind-of-business-insurance-do-healthtech-companies-need"],
+    ["Web3 / crypto portfolio", "What kind of insurance do web3 companies need", "what-kind-of-business-insurance-do-web3-companies-need"],
+    ["VC fund-level conversation", "What is venture capital insurance", "what-is-venture-capital-insurance"],
+    ["Investor expectations discussion", "Aligning insurance with investor expectations", "aligning-insurance-strategy-with-investor-expectations"],
+    ["Founder asking about cost", "How much does startup insurance cost", "start-up-insurance-costs-how-much-to-pay"],
+    ["General education", "What is business insurance", "what-is-business-insurance"]
+  ],
+  platform: [
+    ["General intro / new relationship", "How SaaS companies win enterprise deals with insurance", "how-to-properly-insure-your-saas-startup-to-win-deals-and-protect-your-company"],
+    ["Client with enterprise procurement requirements", "Insurance requirements in contracts", "insurance-requirements-in-contracts-how-to-negotiate-a-mutually-beneficial-outcome"],
+    ["Client in a compliance or security review", "Cyber insurance intro", "cyber-insurance"],
+    ["Client specifically asking about cyber", "Cyber insurance for startups", "cyber-insurance-for-startups-top-concerns-and-insights"],
+    ["Client worrying about data or privacy", "State privacy laws and growing companies", "state-privacy-laws-are-accelerating-what-growing-companies-need-to-know"],
+    ["Fintech platform clients", "Understanding fintech insurance", "understanding-fintech-insurance"],
+    ["SaaS client managing certificates online", "How SaaS businesses manage insurance online", "how-saas-businesses-can-manage-all-their-insurance-processes-online"],
+    ["AI product in customer base", "AI risk management", "ai-risk-management"],
+    ["Client asking about D&O after raise", "Directors & Officers insurance", "directors-and-officers-insurance"],
+    ["Client asking about cost", "How much does business insurance cost for SaaS", "how-much-does-business-insurance-cost-for-b2b-saas-companies"],
+    ["Client asking about E&O / tech liability", "Tech E&O insurance", "tech-errors-and-omissions-insurance"],
+    ["Client with HR/people question", "Employment practices liability", "employment-practices-liability-insurance"]
+  ],
+  service: [
+    ["General intro / new relationship", "What is startup business insurance", "what-is-startup-business-insurance-and-why-do-i-need-it"],
+    ["Client in contract negotiation", "Insurance requirements in contracts", "insurance-requirements-in-contracts-how-to-negotiate-a-mutually-beneficial-outcome"],
+    ["Client adding first employees", "Employment practices liability", "employment-practices-liability-insurance"],
+    ["Client in California hiring", "California EPL trends for startups", "california-employment-liability-trends-for-startups"],
+    ["Client asking what investors require", "Aligning insurance with investor expectations", "aligning-insurance-strategy-with-investor-expectations"],
+    ["Client forming a board", "D&O intro", "directors-and-officers-insurance"],
+    ["Board member asking about personal liability", "Understanding board member liability", "understanding-board-member-liability-insurance"],
+    ["Client signing a commercial lease", "Commercial lease insurance", "commercial-lease-insurance"],
+    ["Client at wind-down / acquisition", "Understanding tail insurance", "understanding-tail-insurance"],
+    ["Accounting client with fraud exposure", "Crime insurance", "crime-insurance"],
+    ["Client asking about E&O for their firm", "E&O insurance", "errors-and-omissions-insurance"],
+    ["Client asking general 'what do I need'", "Types of business insurance", "types-of-business-insurance"],
+    ["Client asking about cost", "Business insurance cost", "business-insurance-cost"],
+    ["Client approaching renewal", "How to prepare for business insurance renewal", "how-to-prepare-for-your-business-insurance-renewal"]
+  ],
+  all: [
+    ["Incorporation / company formation", "When does my startup need insurance", "when-does-my-startup-need-insurance"],
+    ["Fundraising (any round)", "Why premiums increase after raising money", "why-business-insurance-premiums-increase-after-you-raise-money"],
+    ["First employees / rapid hiring", "Employment practices liability", "employment-practices-liability-insurance"],
+    ["New board / first investors", "D&O insurance intro", "directors-and-officers-insurance"],
+    ["Enterprise contract signing", "Insurance requirements in contracts", "insurance-requirements-in-contracts-how-to-negotiate-a-mutually-beneficial-outcome"],
+    ["Compliance / security review", "Cyber insurance intro", "cyber-insurance"],
+    ["Data or privacy event / concern", "State privacy laws for growing companies", "state-privacy-laws-are-accelerating-what-growing-companies-need-to-know"],
+    ["Hiring in California", "California EPL trends", "california-employment-liability-trends-for-startups"],
+    ["Signing a commercial lease", "Commercial lease insurance", "commercial-lease-insurance"],
+    ["Cost conversation", "How to lower business insurance costs", "how-to-lower-business-insurance-costs"],
+    ["Approaching renewal", "How to prepare for business insurance renewal", "how-to-prepare-for-your-business-insurance-renewal"],
+    ["AI product / AI exposure", "AI risk management", "ai-risk-management"],
+    ["Tail coverage / wind-down / acquisition", "Understanding tail insurance", "understanding-tail-insurance"]
+  ]
+};
+
+const ONBOARDING = {
+  venture: [
+    {
+      stage: "Day 1",
+      subject: "You're in — here's your setup (and what founders call us for)",
+      body: `Hi [Name],
+
+Really glad to have [firm] in the network — you're exactly the kind of partner we want referring to us, and we take that seriously.
+
+A few things to have on hand as we get started:
+
+• Your partner page: [partner page link] — this is what to share with founders. It routes them to Vouch with your referral attached, and we close the loop with you at every stage.
+• Partner Hub: [hub link] — everything in one place: your referral link, program overview, and collateral.
+• How to refer: The simplest version is a one-line intro — "Check out Vouch for your insurance — they're built for startups and understand how growth milestones affect coverage." We take it from there.
+
+I'm your direct point of contact, so reply to this any time and it comes straight to me. Our call is booked for [date] and I'm looking forward to it.
+
+[Your name]`
+    },
+    {
+      stage: "Day 14",
+      subject: "Before our call — three ways to refer without creating work for you",
+      body: `Hi [Name],
+
+Checking in ahead of our call. Three easy ways founders in your portfolio can connect with Vouch:
+
+1. Share your partner page with a one-liner: "We work with Vouch for startup insurance — they're built for early-stage companies and understand founder timelines." → [partner page link]
+2. Flag a specific moment: fundraising, first hire, and board formation are the three moments when insurance questions almost always surface. If you see one of those coming, that's the right time to point them our way.
+3. Make a warm intro: just CC me on an email or reply here with their name. I'll handle the rest.
+
+One resource worth having on hand for portfolio team questions: When does my startup need insurance (https://vouch.us/insurance101/when-does-my-startup-need-insurance) — it maps insurance decisions to growth milestones in plain language. Good to forward when founders ask.
+
+I'll come to the call with one question: who in your portfolio is in a fundraising or hiring moment right now? Let's leave with at least one name. I'll also come prepared with a question about what kinds of introductions from our side would be useful to you.
+
+[Your name]`
+    },
+    {
+      stage: "End of Q1",
+      subject: "A quick look at our first quarter together",
+      body: `Hi [Name],
+
+Wanted to close the loop on our first quarter. Here's where things stand from my end:
+
+• Referrals submitted: [X]
+• Quotes sent: [X]
+• Policies bound: [X]
+
+[If results > 0: Really appreciate you sending [name/company] our way — those are exactly the kinds of introductions that make a difference.]
+[If no referrals yet: We didn't get there this quarter — I want to change that. Before Q2 gets moving, can we take 15 minutes to name one specific moment where a referral makes sense? I'd rather leave that call with a concrete plan than hope it comes up naturally.]
+
+I'd love to get 30 minutes on the calendar to talk through what's ahead — what's on your portfolio's plate, and where we can add value. [calendar link]
+
+[Your name]`
+    }
+  ],
+  platform: [
+    {
+      stage: "Day 1",
+      subject: "You're in — here's your setup (and when to loop us in)",
+      body: `Hi [Name],
+
+Really glad to have [company] in the Vouch partner network. You work with companies at exactly the moment insurance complexity tends to surface — compliance reviews, enterprise contracts, rapid hiring — and we're built to remove that friction for your customers without creating work for you.
+
+A few things to get you set up:
+
+• Your partner page: [partner page link] — what to share when customers ask about insurance. It routes them to Vouch with your referral attached.
+• Partner Hub: [hub link] — your referral link, program overview, and resources in one place.
+• How to refer: The most common moment we see from platform partners is when a customer hits a compliance checkpoint or starts preparing for their first enterprise contract. If that comes up, we're the right call — share the link or loop me in.
+
+I'm your direct contact here, so reply any time. Our call is on the calendar for [date].
+
+[Your name]`
+    },
+    {
+      stage: "Day 14",
+      subject: "Before our call — where we fit in your customer workflow",
+      body: `Hi [Name],
+
+Checking in before our call. Three ways your customers can connect with Vouch without it creating work for your team:
+
+1. Add your partner page to onboarding: "Need business insurance? We partner with Vouch — they work specifically with growing tech companies." → [partner page link]
+2. Flag the enterprise readiness moment: when a customer is prepping for their first enterprise contract, going through a security review, or getting asked for a certificate of insurance — that's when we can step in and remove the friction.
+3. CC me on a thread: if a customer is asking insurance questions you don't want to own, just loop me in. I'll handle it from there.
+
+One resource worth having for customers in that procurement moment: How SaaS companies win enterprise deals with the right coverage (https://vouch.us/insurance101/how-to-properly-insure-your-saas-startup-to-win-deals-and-protect-your-company). Good to drop in a help article or onboarding flow.
+
+I'll come to the call prepared to talk through where in your workflow this fits most naturally. One question in advance: what's the most common insurance moment you see with customers — compliance, contracts, or something else? Helps me make the call useful. I'll also come with a question about what kinds of introductions from our side would be valuable to you.
+
+[Your name]`
+    },
+    {
+      stage: "End of Q1",
+      subject: "A quick look at our first quarter together",
+      body: `Hi [Name],
+
+Wanted to share where we landed after Q1.
+
+From my end:
+
+• Referrals submitted: [X]
+• Quotes sent: [X]
+• Policies bound: [X]
+
+[If results > 0: Really appreciate the introductions — those are exactly the kinds of customers we do our best work with.]
+[If no referrals yet: We didn't get there this quarter — I want to change that. Can we take 15 minutes before Q2 gets moving to identify one specific moment in your customer journey where a referral makes sense? I'd rather build that into your workflow than leave it to chance.]
+
+I'd love to grab 30 minutes to talk through what your customers are focused on in Q2 and where Vouch might fit more naturally into your workflow. [calendar link]
+
+[Your name]`
+    }
+  ],
+  service: [
+    {
+      stage: "Day 1",
+      subject: "You're in — here's your setup (and the moments clients need an intro)",
+      body: `Hi [Name],
+
+Really glad to be partnering with [firm]. We know referrals from advisors carry weight — your clients act on your recommendations, and we take that seriously. Our job is to make sure that when a client follows your lead to Vouch, the experience reflects well on your judgment.
+
+A few things to have on hand:
+
+• Your partner page: [partner page link] — what to share when a client asks who to call for insurance. It routes them to Vouch with your referral attached.
+• Partner Hub: [hub link] — your referral link, program overview, and collateral in one place.
+• How to refer: The simplest version is a one-liner in the right moment — "For insurance, I'd recommend Vouch — they specialize in companies like yours." We take it from there and keep you in the loop.
+
+I'm your direct contact here, so reply any time. Our call is booked for [date].
+
+[Your name]`
+    },
+    {
+      stage: "Day 14",
+      subject: "Before our call — the three moments clients need an intro",
+      body: `Hi [Name],
+
+Checking in before our call. Three moments where clients are most likely to need an introduction to Vouch:
+
+1. Company formation / incorporation: "As you set up the entity, you'll want to think about insurance early — the firm I recommend is Vouch." → [partner page link]
+2. Contract negotiations: when a client is signing a commercial lease, an enterprise contract, or any agreement with insurance requirements, that's a natural hand-off moment.
+3. After a fundraise: new investors and board members almost always surface D&O questions. If that comes up in your advisory conversations, it's a clean introduction.
+
+One resource your clients often ask about early on: What is startup business insurance and why do I need it (https://vouch.us/insurance101/what-is-startup-business-insurance-and-why-do-i-need-it) — good for a client who's early-stage and not sure where to start.
+
+I'll come to the call with one question: who in your current client roster is in a raise, a contract negotiation, or adding headcount right now? Let's leave with one specific name. I'll also come prepared to talk about what kinds of introductions from our network would be useful on your side.
+
+[Your name]`
+    },
+    {
+      stage: "End of Q1",
+      subject: "A quick look at our first quarter together",
+      body: `Hi [Name],
+
+Wanted to close the loop on our first quarter. Here's where things stand from my end:
+
+• Referrals submitted: [X]
+• Quotes sent: [X]
+• Policies bound: [X]
+
+[If results > 0: Really appreciate you sending [name/company] our way — those are exactly the kinds of clients we do our best work for, and I'll make sure the experience reflects well on you.]
+[If no referrals yet: We didn't get there this quarter — I'd like to change that. Can we take 15 minutes to identify one specific client moment where an introduction makes sense? I'd rather leave that call with a concrete plan than hope it comes up naturally.]
+
+I'd love to get 30 minutes on the calendar to talk through Q2 — what your clients are working on, and where Vouch might come up naturally in your advisory conversations. [calendar link]
+
+[Your name]`
+    }
+  ]
+};
+
+const MONTHLY = {
+  venture: [
+    {
+      title: "Post-Raise / Fundraising Moment",
+      when: "Use when: a portfolio company just closed a round, announced funding, or is actively raising.",
+      subject: "One thing that catches founders off guard right after a raise",
+      body: `Hi [Name],
+
+Saw [portfolio company]'s [Series X] announcement — congratulations to them. One thing that tends to catch founders off guard right after a raise: premiums increase when you take on institutional capital, and a lot of companies aren't expecting that conversation.
+
+This piece breaks down why it happens and what founders should do about it: https://vouch.us/insurance101/why-business-insurance-premiums-increase-after-you-raise-money — worth sharing before their next renewal hits.
+
+Let me know if any of your other portfolio companies are mid-raise right now — happy to get in front of it early.
+
+[Your name]`
+    },
+    {
+      title: "New Board / D&O Conversation",
+      when: "Use when: a portfolio company is forming a board, bringing on new investors, or a founder asks about director liability.",
+      subject: "D&O comes up fast after a board forms — here's what founders need",
+      body: `Hi [Name],
+
+With [company / portfolio companies] adding board members, D&O tends to come up fast and get answered slowly. Most founders don't know what they actually need until an investor asks.
+
+This overview is the clearest intro I know of — covers what it is, when you need it, and what happens if you don't have it: https://vouch.us/insurance101/directors-and-officers-insurance. Good to send before the first board meeting.
+
+If any of your founders are in that moment right now, happy to jump on a quick call with them.
+
+[Your name]`
+    },
+    {
+      title: "General Portfolio Onboarding / New Cohort",
+      when: "Use when: new accelerator cohort starts, new portfolio companies are added, or at the start of a new quarter.",
+      subject: "Three moments when insurance questions always surface for new founders",
+      body: `Hi [Name],
+
+With [cohort name / new portfolio additions] starting this quarter, figured I'd flag the three moments when insurance questions almost always surface: fundraising, first hire, and signing a major contract. Companies that get ahead of those moments avoid the deadline pressure — the ones that don't tend to find out the hard way.
+
+This overview maps coverage decisions to those milestones in plain language — good to have on hand for founders who ask: https://vouch.us/insurance101/what-kind-of-insurance-do-startups-need
+
+Who in the new cohort is moving fastest right now? Happy to be a resource for them directly.
+
+[Your name]`
+    },
+    {
+      title: "AI-Focused Fund or Portfolio",
+      when: "Use when: the fund has an AI thesis or a portfolio company is building AI products.",
+      subject: "AI startups have a different risk profile — most founders don't know it yet",
+      body: `Hi [Name],
+
+Given [firm]'s focus on AI companies, thought this was worth sending over: What kind of insurance do AI companies need (https://vouch.us/insurance101/what-kind-of-business-insurance-do-ai-companies-need) and a deeper piece on AI risk management (https://vouch.us/insurance101/ai-risk-management). The risk profile for AI startups is genuinely different — especially around E&O and IP — and most founders don't realize it until a client contract surfaces it.
+
+Anything in your current portfolio navigating that right now?
+
+[Your name]`
+    },
+    {
+      title: "Reciprocity / Giving Back",
+      when: "Use when: you want to offer value to the COI directly, not just their clients. Quarterly or to deepen the relationship.",
+      subject: "Introductions that might be useful to you",
+      body: `Hi [Name],
+
+Quick one — we work with a lot of founders and operators across the portfolio ecosystem, and I want to make sure I'm actually useful to you, not just sending you content.
+
+Is there a type of introduction that would genuinely move the needle for you right now? Co-investors, operators in a specific vertical, advisors, other platform teams — I'd rather spend some time on that than send another link.
+
+Let me know what would be most useful.
+
+[Your name]`
+    }
+  ],
+  platform: [
+    {
+      title: "Enterprise Contract / Procurement Moment",
+      when: "Use when: a customer is in enterprise sales cycles, getting asked for insurance certificates, or prepping for procurement reviews.",
+      subject: "When insurance requirements show up late in a deal",
+      body: `Hi [Name],
+
+For customers navigating their first enterprise contract, insurance requirements often show up late in the deal and slow things down. This piece breaks down what enterprise buyers typically ask for and how to handle it — useful for a customer who's getting caught off guard: https://vouch.us/insurance101/insurance-requirements-in-contracts-how-to-negotiate-a-mutually-beneficial-outcome
+
+If any of your customers are in that moment right now, happy to jump in directly and move fast.
+
+[Your name]`
+    },
+    {
+      title: "Compliance / Cyber Security Review",
+      when: "Use when: a customer is going through a compliance review, security questionnaire, or asking about cyber coverage.",
+      subject: "Cyber questions in the compliance window — what customers ask",
+      body: `Hi [Name],
+
+Compliance and security reviews are becoming a default part of enterprise sales for a lot of SaaS companies. Cyber insurance questions come up in that same window, and most early-stage companies aren't sure what they need.
+
+Cyber insurance for startups is a solid starting point — covers what it covers, what it doesn't, and when it matters: https://vouch.us/insurance101/cyber-insurance-for-startups-top-concerns-and-insights. Good to have on hand for customers navigating that conversation.
+
+Anything coming up with your customers on the compliance side?
+
+[Your name]`
+    },
+    {
+      title: "Fintech Platform Customers",
+      when: "Use when: the platform serves fintech companies or the customer base is in financial services.",
+      subject: "Most brokers aren't built for fintech — here's what your customers need to know",
+      body: `Hi [Name],
+
+For your fintech customers, insurance needs are genuinely different — and most startup-focused brokers aren't built for it. Licensing exposure, money movement risk, and regulatory complexity require a different kind of coverage structure, and companies that don't know that usually discover it mid-growth when it's expensive to fix.
+
+Understanding fintech insurance is the clearest overview of what fintech companies need and why: https://vouch.us/insurance101/understanding-fintech-insurance. Worth sending to customers who are scaling into more regulated territory.
+
+Let me know if any of your customers are in that moment right now.
+
+[Your name]`
+    },
+    {
+      title: "Data / Privacy Issue",
+      when: "Use when: a customer has a data incident, is navigating state privacy law, or is asking about privacy-related coverage.",
+      subject: "State privacy laws are landing on startups earlier than most expect",
+      body: `Hi [Name],
+
+State privacy laws are getting stricter and the compliance requirements are falling on companies earlier than most expect. For your customers who are growing fast and handling user data, this is worth having on their radar: https://vouch.us/insurance101/state-privacy-laws-are-accelerating-what-growing-companies-need-to-know
+
+If any of your customers are in a privacy review or getting asked about data handling right now, happy to help them think through what coverage they need.
+
+[Your name]`
+    },
+    {
+      title: "Reciprocity / Giving Back",
+      when: "Use when: you want to offer value to the COI directly. Quarterly or when the relationship needs a reset.",
+      subject: "What would actually be useful to you?",
+      body: `Hi [Name],
+
+Quick one — I want to make sure I'm sending you things that are worth your time, not just forwarding links.
+
+Is there anything specific that would be useful to you right now? Introductions to other vendors in the startup stack, content worth sharing with your customer base, or a conversation about what your customers are focused on this quarter — I'd rather start there.
+
+What's most useful?
+
+[Your name]`
+    }
+  ],
+  service: [
+    {
+      title: "Contract Negotiation / Insurance Requirements",
+      when: "Use when: a client is signing a commercial lease, enterprise contract, or any agreement where the other side is asking for certificates of insurance.",
+      subject: "When the other side starts asking for certificates",
+      body: `Hi [Name],
+
+When clients are in contract negotiations and the other side starts asking for insurance requirements, it creates real deadline pressure. This piece breaks down how those conversations typically go and what to ask for: https://vouch.us/insurance101/insurance-requirements-in-contracts-how-to-negotiate-a-mutually-beneficial-outcome
+
+If you've got clients navigating that right now, happy to step in quickly — we can usually turn quotes fast when there's a deadline.
+
+[Your name]`
+    },
+    {
+      title: "First Employees / Hiring",
+      when: "Use when: a client is adding headcount for the first time, or a California-based client is growing their team.",
+      subject: "The coverage most clients don't know they need until there's a claim",
+      body: `Hi [Name],
+
+For clients adding their first employees, employment practices liability is the one coverage that almost never comes up in the advisory conversation — until there's a claim. This overview is useful context before the conversation happens: https://vouch.us/insurance101/employment-practices-liability-insurance. For clients in California specifically, this piece on California EPL trends is worth a look — the exposure is meaningfully different there: https://vouch.us/insurance101/california-employment-liability-trends-for-startups
+
+Any clients in rapid hiring mode right now?
+
+[Your name]`
+    },
+    {
+      title: "Board Formation / D&O",
+      when: "Use when: a client is forming a board, bringing on investors, or a board member is asking about personal liability.",
+      subject: "D&O surfaces fast after a raise — here's the primer",
+      body: `Hi [Name],
+
+D&O questions almost always surface right after a raise or when a board is forming. For clients in that window, this intro to directors and officers insurance is a solid primer: https://vouch.us/insurance101/directors-and-officers-insurance — and if board members are asking about personal liability specifically, this piece addresses it directly: https://vouch.us/insurance101/understanding-board-member-liability-insurance
+
+Good for the advisory conversation before the first board meeting.
+
+[Your name]`
+    },
+    {
+      title: "Renewal / Year-End Risk Review",
+      when: "Use when: a client is approaching renewal, or it's Q4 and clients are doing year-end planning.",
+      subject: "What your clients should have ready before renewal",
+      body: `Hi [Name],
+
+For clients with policies renewing in the next 90 days, a little prep time goes a long way — underwriters want financials, headcount, and any material changes to operations, and companies that bring those organized tend to get better outcomes. How to prepare for your business insurance renewal walks through exactly what to have ready: https://vouch.us/insurance101/how-to-prepare-for-your-business-insurance-renewal
+
+If any of your clients have renewals coming up and want a second opinion before they commit, happy to take a look.
+
+[Your name]`
+    },
+    {
+      title: "Reciprocity / Giving Back",
+      when: "Use when: you want to offer value to the COI directly. Quarterly or to deepen the relationship beyond content.",
+      subject: "What kinds of introductions would be useful to you?",
+      body: `Hi [Name],
+
+We work with a lot of founders and growing companies across the startup ecosystem. I want to make sure I'm actually useful to you — not just a source of insurance content.
+
+If there are introductions I can make — to other advisors, to companies in your target client profile, or to anyone in our network — I'd like to do that. What would be most valuable from your side?
+
+[Your name]`
+    }
+  ]
+};
+
+const COIS = [
+  { name: "Rain", owner: "Rich", segment: "platform", focus: "Platform / Web3", suggest: "Web3 insurance overview", slug: "understanding-web3-insurance" },
+  { name: "New Lab", owner: "Brianna", segment: "venture", focus: "Venture / all verticals", suggest: "When does my startup need insurance — for general portfolio use", slug: "when-does-my-startup-need-insurance" },
+  { name: "SSM Law PC", owner: "Eric", segment: "service", focus: "Service Provider", suggest: "Insurance requirements in contracts — great for deal-flow moments", slug: "insurance-requirements-in-contracts-how-to-negotiate-a-mutually-beneficial-outcome" },
+  { name: "Virgil PBC", owner: "John", segment: "platform", focus: "Platform / SaaS", suggest: "How SaaS companies win enterprise deals", slug: "how-to-properly-insure-your-saas-startup-to-win-deals-and-protect-your-company" },
+  { name: "Sequoia HR", owner: "Eric", segment: "platform", focus: "Platform / HR", suggest: "EPL intro — their clients are hiring fast", slug: "employment-practices-liability-insurance" },
+  { name: "Gunderson", owner: "Eric", segment: "service", focus: "Service Provider / SaaS, AI, Fintech", suggest: "D&O intro for post-raise governance; AI risk for AI-heavy clients", slug: "directors-and-officers-insurance" },
+  { name: "SOSV", owner: "Janay", segment: "venture", focus: "Venture / Healthcare", suggest: "Healthtech insurance cluster", slug: "what-kind-of-business-insurance-do-healthtech-companies-need" },
+  { name: "Founders Network", owner: "Brandon", segment: "venture", focus: "Venture / SF", suggest: "When does my startup need insurance — general intro", slug: "when-does-my-startup-need-insurance" },
+  { name: "Berkeley SkyDeck", owner: "Brandon", segment: "venture", focus: "Venture / SF", suggest: "Fundraising angle — premiums after raising money", slug: "why-business-insurance-premiums-increase-after-you-raise-money" },
+  { name: "JColeman Consulting", owner: "Eric", segment: "service", focus: "Service Provider", suggest: "Types of business insurance — good for general advisory context", slug: "types-of-business-insurance" },
+  { name: "Manatt", owner: "Rich", segment: "service", focus: "Service Provider", suggest: "Contract insurance requirements; tail coverage for wind-downs", slug: "insurance-requirements-in-contracts-how-to-negotiate-a-mutually-beneficial-outcome" },
+  { name: "Coolwater Capital", owner: "Brianna", segment: "venture", focus: "Venture", suggest: "D&O and investor expectations angle", slug: "aligning-insurance-strategy-with-investor-expectations" },
+  { name: "Gust", owner: "Janay", segment: "platform", focus: "Platform / sector agnostic", suggest: "Startup insurance basics", slug: "what-is-startup-business-insurance-and-why-do-i-need-it" },
+  { name: "Tandem", owner: "Brandon", segment: "platform", focus: "Platform / YC clients", suggest: "SaaS enterprise deals and cyber for fast-growing YC companies", slug: "how-to-properly-insure-your-saas-startup-to-win-deals-and-protect-your-company" }
+];
+
+// ===== STATE =====
+let segment = 'venture';
+let view = 'content';
+let query = '';
+
+// ===== RENDER =====
+function escapeHtml(s) {
+  return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+function linkify(s) {
+  return escapeHtml(s).replace(/(https?:\/\/[^\s)]+)/g, '<a href="$1" target="_blank" rel="noopener">$1</a>');
+}
+function matchesQuery(text) {
+  if (!query) return true;
+  return text.toLowerCase().includes(query);
+}
+
+function renderContent() {
+  const list = document.getElementById('content-list');
+  const items = CONTENT[segment] || [];
+  const rows = items.filter(([trig, title, slug]) =>
+    matchesQuery(`${trig} ${title} ${slug}`)
+  );
+  document.getElementById('count-content').textContent = rows.length;
+
+  if (!rows.length) {
+    list.innerHTML = `<div class="empty">No content matches "${escapeHtml(query)}". Try a different keyword or clear the search.</div>`;
+    return;
+  }
+
+  list.innerHTML = rows.map(([trig, title, slug]) => {
+    const url = BASE + slug;
+    return `<div class="card">
+      <div class="row1">
+        <div style="flex:1; min-width:240px;">
+          <div class="trigger">${escapeHtml(trig)}</div>
+          <div class="title">${escapeHtml(title)}</div>
+          <div class="url">${escapeHtml(url)}</div>
+        </div>
+        <div class="actions">
+          <button class="btn" data-copy="${escapeHtml(url)}">Copy URL</button>
+          <a class="btn primary" href="${escapeHtml(url)}" target="_blank" rel="noopener">Open ↗</a>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function renderOnboarding() {
+  const list = document.getElementById('onboarding-list');
+  const seg = segment === 'all' ? 'venture' : segment;
+  const items = ONBOARDING[seg] || [];
+  const rows = items.filter(e => matchesQuery(`${e.subject} ${e.body} ${e.stage}`));
+  document.getElementById('count-onboarding').textContent = rows.length;
+
+  if (segment === 'all') {
+    list.innerHTML = `<div class="empty">Onboarding sequences are segment-specific. Pick Venture, Platform, or Service Provider above.</div>`;
+    return;
+  }
+  if (!rows.length) {
+    list.innerHTML = `<div class="empty">No onboarding emails match "${escapeHtml(query)}".</div>`;
+    return;
+  }
+
+  list.innerHTML = rows.map((e, i) => `
+    <div class="email-card">
+      <div class="email-head">
+        <div class="meta-stack">
+          <span class="email-stage">${escapeHtml(e.stage)}</span>
+          <div class="email-subject">Subject: ${escapeHtml(e.subject)}</div>
+        </div>
+        <div class="actions">
+          <button class="btn" data-copy-subject="${escapeHtml(e.subject)}">Copy subject</button>
+          <button class="btn primary" data-copy-email="onboarding-${seg}-${i}">Copy email</button>
+        </div>
+      </div>
+      <div class="email-body" id="onboarding-${seg}-${i}">${linkify(e.body)}</div>
+    </div>
+  `).join('');
+}
+
+function renderMonthly() {
+  const list = document.getElementById('monthly-list');
+  const seg = segment === 'all' ? 'venture' : segment;
+  const items = MONTHLY[seg] || [];
+  const rows = items.filter(e => matchesQuery(`${e.subject} ${e.title} ${e.when} ${e.body}`));
+  document.getElementById('count-monthly').textContent = rows.length;
+
+  if (segment === 'all') {
+    list.innerHTML = `<div class="empty">Monthly emails are segment-specific. Pick Venture, Platform, or Service Provider above.</div>`;
+    return;
+  }
+  if (!rows.length) {
+    list.innerHTML = `<div class="empty">No monthly emails match "${escapeHtml(query)}".</div>`;
+    return;
+  }
+
+  list.innerHTML = rows.map((e, i) => `
+    <div class="email-card">
+      <div class="email-head">
+        <div class="meta-stack">
+          <span class="email-stage evergreen">Evergreen · ${escapeHtml(e.title)}</span>
+          <div class="email-subject">Subject: ${escapeHtml(e.subject)}</div>
+          <div class="email-when">${escapeHtml(e.when)}</div>
+        </div>
+        <div class="actions">
+          <button class="btn" data-copy-subject="${escapeHtml(e.subject)}">Copy subject</button>
+          <button class="btn primary" data-copy-email="monthly-${seg}-${i}">Copy email</button>
+        </div>
+      </div>
+      <div class="email-body" id="monthly-${seg}-${i}">${linkify(e.body)}</div>
+    </div>
+  `).join('');
+}
+
+function renderCOIs() {
+  const list = document.getElementById('coi-list');
+  const rows = COIS.filter(c => {
+    const segMatch = segment === 'all' || c.segment === segment;
+    const queryMatch = matchesQuery(`${c.name} ${c.owner} ${c.focus} ${c.suggest}`);
+    return segMatch && queryMatch;
+  });
+  document.getElementById('count-coi').textContent = rows.length;
+
+  if (!rows.length) {
+    list.innerHTML = `<div class="empty">No COIs match. Try a different segment or clear the search.</div>`;
+    return;
+  }
+
+  list.innerHTML = rows.map(c => {
+    const url = BASE + c.slug;
+    return `<div class="coi-card">
+      <div class="coi-name">${escapeHtml(c.name)} <span class="coi-owner">· ${escapeHtml(c.owner)}</span></div>
+      <div class="coi-focus"><span class="pill ${c.segment}">${c.segment === 'venture' ? 'Venture' : c.segment === 'platform' ? 'Platform' : 'Service'}</span> ${escapeHtml(c.focus)}</div>
+      <div class="coi-suggest"><strong>Next send:</strong> ${escapeHtml(c.suggest)}</div>
+      <div style="margin-top:10px; display:flex; gap:6px;">
+        <button class="btn" data-copy="${escapeHtml(url)}">Copy URL</button>
+        <a class="btn primary" href="${escapeHtml(url)}" target="_blank" rel="noopener">Open ↗</a>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function renderAll() {
+  // segment context banner
+  ['venture','platform','service','all'].forEach(s => {
+    document.getElementById('ctx-' + s).classList.toggle('hidden', s !== segment);
+  });
+  // section visibility
+  document.getElementById('view-content').classList.toggle('hidden', view !== 'content');
+  document.getElementById('view-onboarding').classList.toggle('hidden', view !== 'onboarding');
+  document.getElementById('view-monthly').classList.toggle('hidden', view !== 'monthly');
+  document.getElementById('view-coi').classList.toggle('hidden', view !== 'coi');
+
+  renderContent();
+  renderOnboarding();
+  renderMonthly();
+  renderCOIs();
+}
+
+// ===== EVENTS =====
+document.querySelectorAll('.seg').forEach(b => {
+  b.addEventListener('click', () => {
+    document.querySelectorAll('.seg').forEach(x => x.classList.remove('active'));
+    b.classList.add('active');
+    segment = b.dataset.segment;
+    renderAll();
+  });
+});
+
+document.querySelectorAll('.view-tab').forEach(b => {
+  b.addEventListener('click', () => {
+    document.querySelectorAll('.view-tab').forEach(x => x.classList.remove('active'));
+    b.classList.add('active');
+    view = b.dataset.view;
+    renderAll();
+  });
+});
+
+document.getElementById('search').addEventListener('input', e => {
+  query = e.target.value.trim().toLowerCase();
+  renderAll();
+});
+
+// Copy handling
+document.body.addEventListener('click', async e => {
+  const btn = e.target.closest('button');
+  if (!btn) return;
+
+  let textToCopy = null;
+  if (btn.dataset.copy) {
+    textToCopy = btn.dataset.copy;
+  } else if (btn.dataset.copySubject) {
+    textToCopy = btn.dataset.copySubject;
+  } else if (btn.dataset.copyEmail) {
+    const node = document.getElementById(btn.dataset.copyEmail);
+    if (node) textToCopy = node.innerText;
+  }
+  if (textToCopy === null) return;
+
+  try {
+    await navigator.clipboard.writeText(textToCopy);
+  } catch (err) {
+    // fallback
+    const ta = document.createElement('textarea');
+    ta.value = textToCopy;
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+  }
+  const original = btn.textContent;
+  btn.textContent = 'Copied ✓';
+  btn.classList.add('copied');
+  setTimeout(() => {
+    btn.textContent = original;
+    btn.classList.remove('copied');
+  }, 1400);
+});
+
+// Initial render
+renderAll();
+</script>
+</body>
+</html>
