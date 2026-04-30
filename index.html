@@ -117,18 +117,17 @@
   }
   .view-tab.active .count { background: var(--accent-soft); color: var(--callout-text); }
 
-  /* Segment context banner */
+  /* Segment context — renders as page subtitle */
   .ctx {
-    background: #fff; border: 1px solid var(--line);
-    border-left: 4px solid var(--accent); border-radius: 8px;
-    padding: 14px 18px; margin-bottom: 22px;
+    background: transparent; border: 0; padding: 0;
+    margin: 4px 0 26px;
   }
-  .ctx[data-segment="venture"] { border-left-color: var(--venture); background: var(--venture-soft); }
-  .ctx[data-segment="platform"] { border-left-color: var(--platform); background: var(--platform-soft); }
-  .ctx[data-segment="service"] { border-left-color: var(--service); background: var(--service-soft); }
-  .ctx h3 { margin: 0 0 4px; font-family: var(--font-extended); font-size: 14px; font-weight: 700; letter-spacing: 0.01em; }
-  .ctx p { margin: 0; color: var(--ink-2); font-size: 14px; }
-  .ctx .pos { font-style: italic; color: var(--ink-2); margin-top: 6px; font-size: 13px; }
+  .ctx h3 {
+    margin: 0 0 6px; font-family: var(--font-display);
+    font-size: 30px; line-height: 1.15; font-weight: 400;
+    color: var(--ink); letter-spacing: -0.005em;
+  }
+  .ctx p { margin: 0; color: var(--ink-2); font-size: 15px; max-width: 640px; }
 
   /* Content map table */
   .grid { display: grid; grid-template-columns: 1fr; gap: 10px; }
@@ -251,7 +250,7 @@
     background: #fff; border: 1px solid var(--line); border-radius: 10px;
     padding: 16px 18px;
   }
-  .why-card .num { font-size: 26px; font-weight: 800; color: var(--callout-text); line-height: 1; margin-bottom: 8px; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+  .why-card .num { font-family: var(--font-display); font-size: 32px; font-weight: 400; color: var(--callout-text); line-height: 1; margin-bottom: 10px; letter-spacing: -0.01em; }
   .why-card .head { font-family: var(--font-extended); font-size: 13px; font-weight: 700; color: var(--ink); margin: 0 0 4px; letter-spacing: 0.01em; }
   .why-card .body { font-size: 13.5px; color: var(--ink-2); line-height: 1.5; }
   .pillars-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 12px; }
@@ -319,17 +318,14 @@
   <div id="ctx-venture" class="ctx" data-segment="venture">
     <h3>Venture / Accelerators</h3>
     <p>VC platform teams, fund partners, accelerator operators. Their clients are founders.</p>
-    <p class="pos">Vouch positioning: "Insurance that keeps up with founders. Experts who understand startup growth milestones."</p>
   </div>
   <div id="ctx-platform" class="ctx hidden" data-segment="platform">
     <h3>Platform Providers</h3>
     <p>Payroll platforms, finance stack tools, compliance SaaS, HR systems. Their clients are startups navigating enterprise readiness.</p>
-    <p class="pos">Vouch positioning: "Insurance that fits naturally into the modern business stack."</p>
   </div>
   <div id="ctx-service" class="ctx hidden" data-segment="service">
     <h3>Service Providers</h3>
     <p>Startup-focused attorneys, CPAs, fractional CFOs, banking partners. Their clients rely on them as a first call.</p>
-    <p class="pos">Vouch positioning: "A credible, expert-led brokerage that makes advisors look good."</p>
   </div>
   <div id="ctx-all" class="ctx hidden" data-segment="all">
     <h3>All trigger moments</h3>
