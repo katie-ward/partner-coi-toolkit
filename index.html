@@ -5,6 +5,36 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Partner COI Toolkit — Vouch</title>
 <style>
+  /* Vouch brand fonts */
+  @font-face {
+    font-family: 'Mirador';
+    src: url('fonts/Mirador-Book.otf') format('opentype');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+  }
+  @font-face {
+    font-family: 'GT America';
+    src: url('fonts/GT-America-Standard-Regular.otf') format('opentype');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+  }
+  @font-face {
+    font-family: 'GT America Extended';
+    src: url('fonts/GT-America-Extended-Medium.otf') format('opentype');
+    font-weight: 500;
+    font-style: normal;
+    font-display: swap;
+  }
+  @font-face {
+    font-family: 'GT America Extended';
+    src: url('fonts/GT-America-Extended-Bold.otf') format('opentype');
+    font-weight: 700;
+    font-style: normal;
+    font-display: swap;
+  }
+
   :root {
     /* Vouch 2.0 brand palette */
     --ink: #0F1C2C;            /* Dark Blue — main text */
@@ -25,17 +55,22 @@
     --service-soft: #FAEDD0;
     --muted: #5A6878;
     --hover: #EEF1E5;
+    /* Type stack */
+    --font-display: 'Mirador', 'Georgia', serif;
+    --font-body: 'GT America', -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    --font-extended: 'GT America Extended', 'GT America', -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
   }
   * { box-sizing: border-box; }
   html, body {
     margin: 0; padding: 0; background: var(--paper); color: var(--ink);
-    font-family: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    font-family: var(--font-body);
     font-size: 15px; line-height: 1.5;
+    -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale;
   }
   .wrap { max-width: 1180px; margin: 0 auto; padding: 32px 28px 80px; }
   header { border-bottom: 1px solid var(--line); padding-bottom: 22px; margin-bottom: 28px; }
-  .eyebrow { font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); font-weight: 600; }
-  h1 { font-size: 34px; line-height: 1.15; margin: 6px 0 8px; letter-spacing: -0.02em; font-weight: 700; }
+  .eyebrow { font-family: var(--font-extended); font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); font-weight: 500; }
+  h1 { font-family: var(--font-display); font-size: 44px; line-height: 1.05; margin: 6px 0 8px; letter-spacing: -0.01em; font-weight: 400; }
   h1 .accent { color: var(--callout-text); }
   .lede { color: var(--ink-2); max-width: 720px; font-size: 16px; }
   .meta { color: var(--muted); font-size: 13px; margin-top: 10px; }
@@ -55,7 +90,7 @@
   .seg {
     border: 1px solid var(--line-2); background: #fff; color: var(--ink);
     padding: 10px 16px; border-radius: 999px; cursor: pointer;
-    font-size: 14px; font-weight: 600; letter-spacing: 0.01em;
+    font-family: var(--font-extended); font-size: 13px; font-weight: 500; letter-spacing: 0.02em;
     transition: all 0.15s ease;
   }
   .seg .dot { display: inline-block; width: 8px; height: 8px; border-radius: 999px; margin-right: 8px; vertical-align: middle; }
@@ -70,7 +105,7 @@
   .views { display: flex; gap: 0; border-bottom: 1px solid var(--line); margin: 22px 0 24px; flex-wrap: wrap; }
   .view-tab {
     background: transparent; border: 0; cursor: pointer;
-    padding: 12px 16px; font-size: 14px; font-weight: 600;
+    padding: 12px 16px; font-family: var(--font-extended); font-size: 13px; font-weight: 500; letter-spacing: 0.02em;
     color: var(--muted); border-bottom: 2px solid transparent;
     transition: all 0.15s ease; margin-bottom: -1px;
   }
@@ -91,7 +126,7 @@
   .ctx[data-segment="venture"] { border-left-color: var(--venture); background: var(--venture-soft); }
   .ctx[data-segment="platform"] { border-left-color: var(--platform); background: var(--platform-soft); }
   .ctx[data-segment="service"] { border-left-color: var(--service); background: var(--service-soft); }
-  .ctx h3 { margin: 0 0 4px; font-size: 15px; }
+  .ctx h3 { margin: 0 0 4px; font-family: var(--font-extended); font-size: 14px; font-weight: 700; letter-spacing: 0.01em; }
   .ctx p { margin: 0; color: var(--ink-2); font-size: 14px; }
   .ctx .pos { font-style: italic; color: var(--ink-2); margin-top: 6px; font-size: 13px; }
 
@@ -106,8 +141,8 @@
     width: 100%; border-collapse: collapse; font-size: 14px;
   }
   .content-table thead th {
-    text-align: left; font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em;
-    font-weight: 700; color: var(--muted); padding: 12px 16px;
+    text-align: left; font-family: var(--font-extended); font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em;
+    font-weight: 500; color: var(--muted); padding: 12px 16px;
     background: var(--paper); border-bottom: 1px solid var(--line);
   }
   .content-table tbody td {
@@ -117,7 +152,7 @@
   .content-table tbody tr:last-child td { border-bottom: 0; }
   .content-table tbody tr:hover { background: var(--hover); }
   .col-trigger { width: 26%; color: var(--ink-2); font-weight: 500; line-height: 1.4; }
-  .col-title { width: 30%; font-weight: 600; color: var(--ink); line-height: 1.4; }
+  .col-title { width: 30%; font-family: var(--font-extended); font-weight: 500; color: var(--ink); line-height: 1.4; }
   .col-slug {
     width: 28%; font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
     font-size: 12px; color: var(--muted); word-break: break-all; line-height: 1.5;
@@ -128,7 +163,7 @@
   .actions { display: flex; gap: 8px; flex-shrink: 0; }
   .btn {
     border: 1px solid var(--line-2); background: #fff; color: var(--ink);
-    padding: 7px 12px; border-radius: 8px; font-size: 13px; font-weight: 600;
+    padding: 7px 12px; border-radius: 8px; font-family: var(--font-extended); font-size: 12px; font-weight: 500; letter-spacing: 0.02em;
     cursor: pointer; transition: all 0.15s ease; white-space: nowrap;
   }
   .btn:hover { background: var(--ink); color: #fff; border-color: var(--ink); }
@@ -147,12 +182,12 @@
   }
   .email-head .meta-stack { flex: 1; min-width: 240px; }
   .email-stage {
-    display: inline-block; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase;
-    background: var(--ink); color: var(--callout-blue); padding: 3px 9px; border-radius: 4px; font-weight: 700; margin-bottom: 6px;
+    display: inline-block; font-family: var(--font-extended); font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase;
+    background: var(--ink); color: var(--callout-blue); padding: 3px 9px; border-radius: 4px; font-weight: 500; margin-bottom: 6px;
   }
   .email-stage.evergreen { background: var(--callout-text); color: #fff; }
   .email-when { font-size: 13px; color: var(--muted); margin-top: 6px; font-style: italic; }
-  .email-subject { font-size: 16px; font-weight: 600; margin: 4px 0 0; line-height: 1.35; }
+  .email-subject { font-family: var(--font-extended); font-size: 15px; font-weight: 500; margin: 4px 0 0; line-height: 1.35; letter-spacing: 0.005em; }
   .email-body {
     padding: 18px 20px; white-space: pre-wrap; font-size: 14.5px; line-height: 1.6;
     color: var(--ink-2);
@@ -166,12 +201,12 @@
     padding: 14px 16px; transition: all 0.15s ease;
   }
   .coi-card:hover { border-color: var(--ink); box-shadow: 0 4px 14px rgba(11,27,43,0.04); }
-  .coi-name { font-weight: 700; font-size: 15px; }
+  .coi-name { font-family: var(--font-extended); font-weight: 700; font-size: 14px; letter-spacing: 0.01em; }
   .coi-owner { font-size: 12px; color: var(--muted); }
   .coi-focus { font-size: 13px; margin: 6px 0 8px; color: var(--ink-2); }
   .pill {
-    display: inline-block; font-size: 11px; padding: 2px 8px; border-radius: 999px;
-    font-weight: 600; letter-spacing: 0.02em; margin-right: 4px;
+    display: inline-block; font-family: var(--font-extended); font-size: 10px; padding: 2px 8px; border-radius: 999px;
+    font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase; margin-right: 4px;
   }
   .pill.venture { background: var(--venture-soft); color: var(--venture); }
   .pill.platform { background: var(--platform-soft); color: var(--platform); }
@@ -205,10 +240,10 @@
   .pos-hero[data-segment="platform"] { border-left-color: var(--platform); }
   .pos-hero[data-segment="service"] { border-left-color: var(--service); }
   .pos-hero .label {
-    font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase;
-    font-weight: 700; color: var(--muted); margin-bottom: 8px;
+    font-family: var(--font-extended); font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase;
+    font-weight: 500; color: var(--muted); margin-bottom: 10px;
   }
-  .pos-hero .line { font-size: 21px; line-height: 1.35; font-weight: 600; color: var(--ink); letter-spacing: -0.01em; }
+  .pos-hero .line { font-family: var(--font-display); font-size: 26px; line-height: 1.25; font-weight: 400; color: var(--ink); letter-spacing: -0.005em; }
   .pos-section { margin-bottom: 26px; }
   .pos-section .lede { font-size: 13px; color: var(--muted); margin: -4px 0 12px; }
   .why-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; }
@@ -217,14 +252,14 @@
     padding: 16px 18px;
   }
   .why-card .num { font-size: 26px; font-weight: 800; color: var(--callout-text); line-height: 1; margin-bottom: 8px; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
-  .why-card .head { font-size: 14px; font-weight: 700; color: var(--ink); margin: 0 0 4px; }
+  .why-card .head { font-family: var(--font-extended); font-size: 13px; font-weight: 700; color: var(--ink); margin: 0 0 4px; letter-spacing: 0.01em; }
   .why-card .body { font-size: 13.5px; color: var(--ink-2); line-height: 1.5; }
   .pillars-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 12px; }
   .pillar-card {
     background: #fff; border: 1px solid var(--line); border-radius: 10px;
     padding: 16px 18px;
   }
-  .pillar-card .head { font-size: 13px; font-weight: 700; color: var(--callout-text); letter-spacing: 0.04em; text-transform: uppercase; margin: 0 0 6px; }
+  .pillar-card .head { font-family: var(--font-extended); font-size: 11px; font-weight: 500; color: var(--callout-text); letter-spacing: 0.1em; text-transform: uppercase; margin: 0 0 8px; }
   .pillar-card .body { font-size: 13.5px; color: var(--ink-2); line-height: 1.5; }
   .snippet-card {
     background: #fff; border: 1px solid var(--line); border-radius: 12px;
@@ -238,7 +273,7 @@
   }
 
   /* Section heads */
-  .section-head { font-size: 13px; text-transform: uppercase; letter-spacing: 0.1em; font-weight: 700; color: var(--muted); margin: 26px 0 12px; }
+  .section-head { font-family: var(--font-extended); font-size: 12px; text-transform: uppercase; letter-spacing: 0.1em; font-weight: 500; color: var(--muted); margin: 26px 0 12px; }
 
   /* Hide non-active */
   .hidden { display: none !important; }
